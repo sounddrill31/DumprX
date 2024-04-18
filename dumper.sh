@@ -1163,16 +1163,16 @@ if [[ -s "${PROJECT_DIR}"/.github_token ]]; then
 	}
 	git add -- . ':!system/' ':!vendor/'
 	git commit -sm "Add extras for ${description}"
-	git push -u origin "${branch}"
+	git push -u origin "${branch}" || continue
 	git add vendor/
 	git commit -sm "Add vendor for ${description}"
-	git push -u origin "${branch}"
+	git push -u origin "${branch}" || continue
 	git add $(find -type f -name '*.apk')
 	git commit -sm "Add apps for ${description}"
-	git push -u origin "${branch}"
+	git push -u origin "${branch}" || continue
 	git add system/
 	git commit -sm "Add system for ${description}"
-	git push -u origin "${branch}"
+	git push -u origin "${branch}" || continue
 	sleep 1
 	
 	# Telegram channel post
