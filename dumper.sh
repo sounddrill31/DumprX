@@ -1306,6 +1306,7 @@ do
   git add -- . ':!system/' ':!vendor/'
   if git diff-index --quiet HEAD --; then
     echo "No changes to commit, skipping commit and push"
+	break
   else
     git commit -sm "Add extras for ${description}"
     git push -u origin "${branch}"
@@ -1313,6 +1314,7 @@ do
   git add vendor/
   if git diff-index --quiet HEAD --; then
     echo "No changes to commit, skipping commit and push"
+	break
   else
     git commit -sm "Add vendor for ${description}"
     git push -u origin "${branch}"
@@ -1320,6 +1322,7 @@ do
   git add $(find -type f -name '*.apk')
   if git diff-index --quiet HEAD --; then
     echo "No changes to commit, skipping commit and push"
+	break
   else
     git commit -sm "Add apps for ${description}"
     git push -u origin "${branch}"
@@ -1327,6 +1330,7 @@ do
   git add system/
   if git diff-index --quiet HEAD --; then
     echo "No changes to commit, skipping commit and push"
+	break
   else
     git commit -sm "Add system for ${description}"
     git push -u origin "${branch}"
