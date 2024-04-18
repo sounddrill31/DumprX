@@ -1288,32 +1288,51 @@ elif [[ -s "${PROJECT_DIR}"/.gitlab_token ]]; then
 	printf "\n"
 
 	# Push to GitLab
-	while [[ ! $(curl -sL "${GITLAB_HOST}/${GIT_ORG}/${repo}/-/raw/${branch}/all_files.txt" | grep "all_files.txt") ]]
-	do
-		printf "\nPushing to %s via SSH...\nBranch:%s\n" "${GITLAB_HOST}/${GIT_ORG}/${repo}.git" "${branch}"
-		sleep 1
-		git lfs install
-		[ -e ".gitattributes" ] || find . -type f -not -path ".git/*" -size +100M -exec git lfs track {} \;
-		[ -e ".gitattributes" ] && {
-			git add ".gitattributes"
-			git commit -sm "Setup Git LFS"
-			git push -u origin "${branch}"
-		}
-		git add -- . ':!system/' ':!vendor/'
-		git commit -sm "Add extras for ${description}"
-		git push -u origin "${branch}" || continue
-		git add vendor/
-		git commit -sm "Add vendor for ${description}"
-		git push -u origin "${branch}" || continue
-		git add $(find -type f -name '*.apk')
-		git commit -sm "Add apps for ${description}"
-		git push -u origin "${branch}" || continue
-		git add system/
-		git commit -sm "Add system for ${description}"
-		git push -u origin "${branch}" || continue
-		sleep 1
-	done
-
+while [[ ! $(curl -sL "${GITLAB_HOST}/${GIT_ORG}/${repo}/-/raw/${branch}/all_files.txt" | grep "all_files.txt") ]]
+do
+  printf "\nPushing to %s via SSH...\nBranch:%s\n" "${GITLAB_HOST}/${GIT_ORG}/${repo}.git" "${branch}"
+  sleep 1
+  git lfs install
+  [ -e ".gitattributes" ] || find . -type f -not -path ".git/*" -size +100M -exec git lfs track {} \;
+  [ -e ".gitattributes" ] && {
+    git add ".gitattributes"
+    if git diff-index --quiet HEAD --; then
+      echo "No changes to commit, skipping commit and push"
+    else
+      git commit -sm "Setup Git LFS"
+      git push -u origin "${branch}"
+    fi
+  }
+  git add -- . ':!system/' ':!vendor/'
+  if git diff-index --quiet HEAD --; then
+    echo "No changes to commit, skipping commit and push"
+  else
+    git commit -sm "Add extras for ${description}"
+    git push -u origin "${branch}"
+  fi
+  git add vendor/
+  if git diff-index --quiet HEAD --; then
+    echo "No changes to commit, skipping commit and push"
+  else
+    git commit -sm "Add vendor for ${description}"
+    git push -u origin "${branch}"
+  fi
+  git add $(find -type f -name '*.apk')
+  if git diff-index --quiet HEAD --; then
+    echo "No changes to commit, skipping commit and push"
+  else
+    git commit -sm "Add apps for ${description}"
+    git push -u origin "${branch}"
+  fi
+  git add system/
+  if git diff-index --quiet HEAD --; then
+    echo "No changes to commit, skipping commit and push"
+  else
+    git commit -sm "Add system for ${description}"
+    git push -u origin "${branch}"
+  fi
+  sleep 1
+done
 	# Update the Default Branch
 	curl	--request PUT \
 		--header "PRIVATE-TOKEN: ${GITLAB_TOKEN}" \
