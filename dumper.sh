@@ -1298,6 +1298,7 @@ elif [[ -s "${PROJECT_DIR}"/.gitlab_token ]]; then
     		git add ".gitattributes"
     		if git diff-index --quiet HEAD --; then
       			echo "No changes to commit, skipping commit and push"
+	 		break
     		else
       		git commit -sm "Setup Git LFS"
       		git push -u origin "${branch}"
