@@ -1304,37 +1304,29 @@ elif [[ -s "${PROJECT_DIR}"/.gitlab_token ]]; then
     		fi
   	}
   	git add -- . ':!system/' ':!vendor/'
-  	if git diff-index --quiet HEAD --; then
-    		echo "No changes to commit, skipping commit and push"
-		break
-  	else
+  	if ! git diff-index --quiet HEAD --; then
     		git commit -sm "Add extras for ${description}"
     		git push -u origin "${branch}"
   	fi
+
   		git add vendor/
-  	if git diff-index --quiet HEAD --; then
-    		echo "No changes to commit, skipping commit and push"
-		break
-  	else
-    		git commit -sm "Add vendor for ${description}"
+  	if ! git diff-index --quiet HEAD --; then
+    		git commit -sm "Add extras for ${description}"
     		git push -u origin "${branch}"
   	fi
+
   	git add $(find -type f -name '*.apk')
-  	if git diff-index --quiet HEAD --; then
-    		echo "No changes to commit, skipping commit and push"
-		break
-  	else
-    		git commit -sm "Add apps for ${description}"
+  	if ! git diff-index --quiet HEAD --; then
+    		git commit -sm "Add extras for ${description}"
     		git push -u origin "${branch}"
   	fi
+
   	git add system/
-  	if git diff-index --quiet HEAD --; then
-    		echo "No changes to commit, skipping commit and push"
-		break
-  	else
-    	git commit -sm "Add system for ${description}"
-    	git push -u origin "${branch}"
+  	if ! git diff-index --quiet HEAD --; then
+    		git commit -sm "Add extras for ${description}"
+    		git push -u origin "${branch}"
   	fi
+
   	sleep 1
 done
 
