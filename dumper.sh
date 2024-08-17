@@ -1299,19 +1299,42 @@ elif [[ -s "${PROJECT_DIR}"/.gitlab_token ]]; then
 			git commit -sm "Setup Git LFS"
 			git push -u origin "${branch}"
 		}
-		git add -- . ':!system/' ':!vendor/'
-		git commit -sm "Add extras for ${description}"
-		git push -u origin "${branch}"
-		git add vendor/
-		git commit -sm "Add vendor for ${description}"
-		git push -u origin "${branch}"
-		git add $(find -type f -name '*.apk')
-		git commit -sm "Add apps for ${description}"
-		git push -u origin "${branch}"
-		git add system/
-		git commit -sm "Add system for ${description}"
-		git push -u origin "${branch}"
+
+	# Define an array of commit steps and messages
+	commit_steps=(
+    	"git add -- . ':!system/' ':!vendor/'"
+    	"git add vendor/"
+    	"git add $(find -type f -name '*.apk')"
+    	"git add system/"
+		)
+
 		sleep 1
+	done
+	commit_messages=(
+    "Add extras for ${description}"
+    "Add vendor for ${description}"
+    "Add apps for ${description}"
+    "Add system for ${description}"
+	)
+
+	# Loop through each commit step
+	for i in "${!commit_steps[@]}"; do
+ 	   while true; do
+        	eval "${commit_steps[$i]}"
+        	if git diff --staged --quiet; then
+            	echo "No changes to commit for step $((i+1)). Moving to next step."
+            	break
+	        else
+        	    if git commit -sm "${commit_messages[$i]}"; then
+                	git push -u origin "${branch}"
+                	echo "Successfully committed and pushed changes for step $((i+1))."
+                	break
+            	else
+                	echo "Failed to commit changes for step $((i+1)). Retrying..."
+                	sleep 1
+            	fi
+        	fi
+    	done
 	done
 
 	# Update the Default Branch
