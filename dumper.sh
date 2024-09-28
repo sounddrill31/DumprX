@@ -1288,7 +1288,7 @@ elif [[ -s "${PROJECT_DIR}"/.gitlab_token ]]; then
 	printf "\n"
 
 	# Push to GitLab
-	while [[ ! $(curl -sL "${GITLAB_HOST}/${GIT_ORG}/${repo}/-/raw/${branch}/all_files.txt" | grep "all_files.txt") ]]
+	while curl -sfL "${GITLAB_HOST}/${GITLAB_ORG}/${repo}/-/raw/${branch}/all_files.txt"
 	do
 		printf "\nPushing to %s via SSH...\nBranch:%s\n" "${GITLAB_HOST}/${GIT_ORG}/${repo}.git" "${branch}"
 		sleep 1
